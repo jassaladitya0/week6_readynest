@@ -13,7 +13,7 @@ import ExportModal from './components/ExportModal';
 import { SAMPLE_DATASETS } from './utils/sampleData';
 
 export default function App() {
-  const [activeView, setActiveView] = useState('dashboard');
+  const [activeView, setActiveView] = useState('ingest');
   const [currentDatasetInfo, setCurrentDatasetInfo] = useState(SAMPLE_DATASETS[0]);
   const [dataset, setDataset] = useState(SAMPLE_DATASETS[0].data);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);

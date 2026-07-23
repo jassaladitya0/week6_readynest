@@ -34,7 +34,7 @@ export default function DashboardView({ data, datasetName }) {
   const lineChartData = groupAndAggregate(data, categoricalCols[1] || mainCatCol, secondNumCol, 'avg').slice(0, 10);
 
   const handlePDFExport = () => {
-    exportDashboardToPDF('executive-dashboard-node', `${datasetName}_Executive_Report`);
+    exportDashboardToPDF('executive-dashboard-node', datasetName, data);
   };
 
   return (

@@ -59,7 +59,7 @@ export default function ExportModal({ isOpen, onClose, data, datasetName }) {
           <button 
             className="btn btn-emerald" 
             style={{ justifyContent: 'flex-start', padding: '0.8rem 1rem' }}
-            onClick={() => { exportDashboardToPDF('executive-dashboard-node', `${datasetName}_Report`); onClose(); }}
+            onClick={() => { exportDashboardToPDF('executive-dashboard-node', datasetName, data); onClose(); }}
           >
             <FileText size={18} color="white" /> Generate Executive PDF Report (.pdf)
           </button>
