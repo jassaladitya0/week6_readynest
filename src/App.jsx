@@ -18,10 +18,11 @@ export default function App() {
   const [dataset, setDataset] = useState(SAMPLE_DATASETS[0].data);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
-  // Switch preset dataset
+  // Switch preset dataset & jump to dashboard
   const handleSelectPreset = (preset) => {
     setCurrentDatasetInfo(preset);
     setDataset(preset.data);
+    setActiveView('dashboard');
   };
 
   // Update working dataset (from cleaning or upload)
@@ -29,11 +30,11 @@ export default function App() {
     setDataset(newData);
   };
 
-  // Custom data loaded from file uploader
+  // Custom data loaded from file uploader & jump to dashboard
   const handleCustomDataLoaded = (newPresetObj) => {
     setCurrentDatasetInfo(newPresetObj);
     setDataset(newPresetObj.data);
-    setActiveView('wrangler');
+    setActiveView('dashboard');
   };
 
   // Reset dataset back to preset default
@@ -84,6 +85,7 @@ export default function App() {
               datasetInfo={currentDatasetInfo}
               onDataLoaded={handleCustomDataLoaded}
               onSelectPreset={handleSelectPreset}
+              onProceedToAnalysis={() => setActiveView('dashboard')}
             />
           )}
 
