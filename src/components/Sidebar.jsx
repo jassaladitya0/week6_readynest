@@ -7,12 +7,13 @@ import {
   Calculator, 
   Grid, 
   Sparkles, 
-  LayoutDashboard 
+  LayoutDashboard,
+  Code2
 } from 'lucide-react';
 
 export const VIEWS = [
-  { id: 'dashboard', name: 'Executive Dashboard', icon: LayoutDashboard, badge: 'KPI' },
   { id: 'ingest', name: 'Data Ingestion', icon: Database, badge: 'Import' },
+  { id: 'dashboard', name: 'Executive Dashboard', icon: LayoutDashboard, badge: 'KPI' },
   { id: 'wrangler', name: 'Data Wrangler', icon: TableProperties, badge: 'Clean' },
   { id: 'chartStudio', name: 'Visual Chart Studio', icon: BarChart2, badge: '12+ Charts' },
   { id: 'sqlStudio', name: 'SQL Query Studio', icon: Terminal, badge: 'SQL' },
@@ -47,13 +48,13 @@ export default function Sidebar({ activeView, setActiveView }) {
         );
       })}
 
-      <div style={{ marginTop: 'auto', padding: '1rem', background: 'rgba(30, 41, 59, 0.4)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-          <Sparkles size={16} color="#c084fc" />
-          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'white' }}>Pro Features Active</span>
+      <div style={{ marginTop: 'auto', padding: '1rem', background: 'rgba(30, 41, 59, 0.5)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem' }}>
+          <Code2 size={16} color="#60a5fa" />
+          <span style={{ fontSize: '0.825rem', fontWeight: 700, color: 'white' }}>NexusData AI</span>
         </div>
-        <p style={{ fontSize: '0.725rem', color: 'var(--text-muted)', lineHeight: '1.3' }}>
-          Full Client-side SQL & 100k+ row processing.
+        <p style={{ fontSize: '0.75rem', color: '#94a3b8', lineHeight: '1.4' }}>
+          Designed & Developed by <strong style={{ color: '#34d399' }}>Aditya Jassal</strong>
         </p>
       </div>
     </aside>

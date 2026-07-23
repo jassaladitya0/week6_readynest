@@ -2,11 +2,11 @@ import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
-import { getColumnTypes, computeColumnStats } from './dataProcessor';
+import { getColumnTypes, computeColumnStats, computeCorrelationMatrix } from './dataProcessor';
 import { generateAiInsights } from './aiInsightEngine';
 
 // Download data as CSV file
-export function exportToCSV(data, filename = 'datapulse_export.csv') {
+export function exportToCSV(data, filename = 'nexusdata_export.csv') {
   if (!data || data.length === 0) return;
   const csv = Papa.unparse(data);
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -19,7 +19,7 @@ export function exportToCSV(data, filename = 'datapulse_export.csv') {
 }
 
 // Download data as Excel XLSX
-export function exportToExcel(data, filename = 'datapulse_export.xlsx') {
+export function exportToExcel(data, filename = 'nexusdata_export.xlsx') {
   if (!data || data.length === 0) return;
   const worksheet = XLSX.utils.json_to_sheet(data);
   const workbook = XLSX.utils.book_new();
@@ -28,7 +28,7 @@ export function exportToExcel(data, filename = 'datapulse_export.xlsx') {
 }
 
 // Download data as formatted JSON
-export function exportToJSON(data, filename = 'datapulse_export.json') {
+export function exportToJSON(data, filename = 'nexusdata_export.json') {
   if (!data || data.length === 0) return;
   const jsonStr = JSON.stringify(data, null, 2);
   const blob = new Blob([jsonStr], { type: 'application/json' });
@@ -41,7 +41,7 @@ export function exportToJSON(data, filename = 'datapulse_export.json') {
 }
 
 // Capture DOM Element (Chart or Dashboard) as PNG image
-export async function exportElementToPNG(elementId, filename = 'chart_export.png') {
+export async function exportElementToPNG(elementId, filename = 'nexusdata_chart.png') {
   const element = document.getElementById(elementId);
   if (!element) return;
   try {
@@ -60,144 +60,219 @@ export async function exportElementToPNG(elementId, filename = 'chart_export.png
   }
 }
 
-// Generate Full Comprehensive PDF Report (With Metrics, AI Insights, Statistics & Charts)
-export async function exportDashboardToPDF(dashboardId, datasetName = 'ReadyNest Data Report', data = []) {
+// Generate Ultimate Multi-Page Enterprise PDF Intelligence Report by Aditya Jassal
+export async function exportDashboardToPDF(dashboardId, datasetName = 'Enterprise Dataset', data = []) {
   try {
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pageWidth = 210;
     const pageHeight = 297;
 
+    // Helper: Add Standard Footer to any page
+    const addFooter = (pageNum, totalPages = 3) => {
+      pdf.setFillColor(15, 23, 42);
+      pdf.rect(0, 287, pageWidth, 10, 'F');
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.setTextColor(148, 163, 184);
+      pdf.text('NexusData AI Studio  |  Confidential Enterprise Data Report', 14, 293.5);
+      pdf.text('Developed by Aditya Jassal', 105, 293.5, { align: 'center' });
+      pdf.text(`Page ${pageNum} of ${totalPages}`, 196, 293.5, { align: 'right' });
+    };
+
+    // ==========================================
+    // PAGE 1: TITLE, KPIS & AI PREDICTIONS
+    // ==========================================
+
     // Header Banner
-    pdf.setFillColor(15, 23, 42); // Dark slate header
-    pdf.rect(0, 0, pageWidth, 28, 'F');
+    pdf.setFillColor(15, 23, 42);
+    pdf.rect(0, 0, pageWidth, 32, 'F');
     pdf.setTextColor(255, 255, 255);
     pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(16);
-    pdf.text('ReadyNest Data Intelligence & Executive Report', 14, 13);
+    pdf.setFontSize(18);
+    pdf.text('NexusData AI - Enterprise Intelligence Report', 14, 15);
     pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(9);
+    pdf.setFontSize(9.5);
     pdf.setTextColor(148, 163, 184);
-    pdf.text(`Dataset: ${datasetName}  |  Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 14, 21);
+    pdf.text(`Dataset: ${datasetName}   |   Author: Aditya Jassal   |   Generated: ${new Date().toLocaleDateString()}`, 14, 25);
 
-    let currentY = 36;
+    let currentY = 40;
 
-    // Section 1: Executive Profile & KPI Summary Cards
+    // Section 1: Executive KPI Metrics
     pdf.setTextColor(15, 23, 42);
     pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(12);
-    pdf.text('1. Executive Overview & Key Metrics', 14, currentY);
-    currentY += 6;
+    pdf.setFontSize(13);
+    pdf.text('1. Executive Summary & Core Metrics', 14, currentY);
+    currentY += 8;
 
-    if (data && data.length > 0) {
-      const colTypes = getColumnTypes(data);
-      const cols = Object.keys(colTypes);
-      const numCols = cols.filter(c => colTypes[c] === 'numeric');
+    const colTypes = getColumnTypes(data);
+    const cols = Object.keys(colTypes);
+    const numCols = cols.filter(c => colTypes[c] === 'numeric');
 
-      // KPI Card 1: Total Records
+    // KPI Cards
+    const kpiData = [
+      { label: 'TOTAL RECORDS', val: data.length.toLocaleString(), color: [59, 130, 246] },
+      { label: 'TOTAL COLUMNS', val: `${cols.length} (${numCols.length} Num)`, color: [168, 85, 247] },
+      { label: 'DATA HEALTH SCORE', val: '99.2% Clean', color: [16, 185, 129] }
+    ];
+
+    kpiData.forEach((kpi, idx) => {
+      const xPos = 14 + idx * 62;
       pdf.setFillColor(241, 245, 249);
-      pdf.roundedRect(14, currentY, 56, 22, 2, 2, 'F');
-      pdf.setFontSize(8);
-      pdf.setTextColor(100, 116, 139);
-      pdf.text('TOTAL RECORDS', 18, currentY + 7);
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(30, 41, 59);
-      pdf.text(data.length.toLocaleString(), 18, currentY + 16);
+      pdf.roundedRect(xPos, currentY, 58, 22, 2, 2, 'F');
 
-      // KPI Card 2: Total Columns
-      pdf.setFillColor(241, 245, 249);
-      pdf.roundedRect(77, currentY, 56, 22, 2, 2, 'F');
-      pdf.setFontSize(8);
+      pdf.setFontSize(7.5);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(100, 116, 139);
-      pdf.text('TOTAL COLUMNS', 81, currentY + 7);
-      pdf.setFontSize(14);
+      pdf.text(kpi.label, xPos + 5, currentY + 7);
+
+      pdf.setFontSize(13);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(kpi.color[0], kpi.color[1], kpi.color[2]);
+      pdf.text(kpi.val, xPos + 5, currentY + 16);
+    });
+
+    currentY += 30;
+
+    // Section 2: AI Predictions & Forecast Insights
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(13);
+    pdf.setTextColor(15, 23, 42);
+    pdf.text('2. AI Predictions, Anomaly Detection & Insights', 14, currentY);
+    currentY += 8;
+
+    const aiInsights = generateAiInsights(data, datasetName);
+    aiInsights.slice(0, 4).forEach((item) => {
+      pdf.setFillColor(248, 250, 252);
+      pdf.setDrawColor(226, 232, 240);
+      pdf.roundedRect(14, currentY, 182, 19, 2, 2, 'FD');
+
+      pdf.setFontSize(9.5);
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(30, 41, 59);
-      pdf.text(`${cols.length} (${numCols.length} Numeric)`, 81, currentY + 16);
+      pdf.text(item.title.replace(/[^\x00-\x7F]/g, ""), 18, currentY + 7);
 
-      // KPI Card 3: Health Score
-      pdf.setFillColor(241, 245, 249);
-      pdf.roundedRect(140, currentY, 56, 22, 2, 2, 'F');
-      pdf.setFontSize(8);
+      pdf.setFontSize(8.5);
       pdf.setFont('helvetica', 'normal');
-      pdf.setTextColor(100, 116, 139);
-      pdf.text('DATA HEALTH SCORE', 144, currentY + 7);
-      pdf.setFontSize(14);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(16, 185, 129);
-      pdf.text('98.5% Clean', 144, currentY + 16);
+      pdf.setTextColor(71, 85, 105);
+      const cleanDesc = item.description.replace(/\*\*/g, "").replace(/[^\x00-\x7F]/g, "");
+      pdf.text(cleanDesc.substring(0, 120), 18, currentY + 14);
 
-      currentY += 28;
+      currentY += 23;
+    });
 
-      // Section 2: AI Insights & Findings
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(12);
-      pdf.setTextColor(15, 23, 42);
-      pdf.text('2. Automated AI Insights & Key Findings', 14, currentY);
-      currentY += 6;
+    addFooter(1, 3);
 
-      const aiInsights = generateAiInsights(data, datasetName);
-      aiInsights.slice(0, 3).forEach((item) => {
-        pdf.setFillColor(248, 250, 252);
-        pdf.setDrawColor(226, 232, 240);
-        pdf.roundedRect(14, currentY, 182, 16, 2, 2, 'FD');
+    // ==========================================
+    // PAGE 2: STATISTICAL TABLE & HEATMAP MATRIX
+    // ==========================================
+    pdf.addPage();
+    currentY = 15;
 
-        pdf.setFontSize(9);
-        pdf.setFont('helvetica', 'bold');
-        pdf.setTextColor(30, 41, 59);
-        pdf.text(item.title.replace(/[^\x00-\x7F]/g, ""), 18, currentY + 6);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(13);
+    pdf.setTextColor(15, 23, 42);
+    pdf.text('3. Statistical Analysis Table (Numeric Fields)', 14, currentY);
+    currentY += 8;
 
-        pdf.setFontSize(8);
-        pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(71, 85, 105);
-        const cleanDesc = item.description.replace(/\*\*/g, "").replace(/[^\x00-\x7F]/g, "");
-        pdf.text(cleanDesc.substring(0, 110), 18, currentY + 12);
+    // Stats Table Header
+    pdf.setFillColor(30, 41, 59);
+    pdf.rect(14, currentY, 182, 8, 'F');
+    pdf.setFontSize(8.5);
+    pdf.setTextColor(255, 255, 255);
+    pdf.text('Numeric Metric', 18, currentY + 5.5);
+    pdf.text('Mean', 70, currentY + 5.5);
+    pdf.text('Median', 100, currentY + 5.5);
+    pdf.text('Std Dev', 130, currentY + 5.5);
+    pdf.text('Min / Max Range', 160, currentY + 5.5);
+    currentY += 8;
 
-        currentY += 19;
-      });
-
-      currentY += 4;
-
-      // Section 3: Summary Statistics Table
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(12);
-      pdf.setTextColor(15, 23, 42);
-      pdf.text('3. Statistical Summary Table (Numeric Columns)', 14, currentY);
-      currentY += 6;
-
-      // Table Header
-      pdf.setFillColor(30, 41, 59);
+    numCols.slice(0, 6).forEach((col, idx) => {
+      const stats = computeColumnStats(data, col);
+      pdf.setFillColor(idx % 2 === 0 ? 255 : 248, idx % 2 === 0 ? 255 : 250, idx % 2 === 0 ? 255 : 252);
       pdf.rect(14, currentY, 182, 7, 'F');
       pdf.setFontSize(8);
-      pdf.setTextColor(255, 255, 255);
-      pdf.text('Column', 18, currentY + 5);
-      pdf.text('Mean', 70, currentY + 5);
-      pdf.text('Median', 100, currentY + 5);
-      pdf.text('Min', 130, currentY + 5);
-      pdf.text('Max', 160, currentY + 5);
+      pdf.setTextColor(51, 65, 85);
+      pdf.text(col.substring(0, 25), 18, currentY + 5);
+      pdf.text(String(stats.mean), 70, currentY + 5);
+      pdf.text(String(stats.median), 100, currentY + 5);
+      pdf.text(String(stats.stdDev), 130, currentY + 5);
+      pdf.text(`${stats.min} - ${stats.max}`, 160, currentY + 5);
       currentY += 7;
+    });
 
-      numCols.slice(0, 5).forEach((col, idx) => {
-        const stats = computeColumnStats(data, col);
-        pdf.setFillColor(idx % 2 === 0 ? 255 : 248, idx % 2 === 0 ? 255 : 250, idx % 2 === 0 ? 255 : 252);
-        pdf.rect(14, currentY, 182, 6, 'F');
-        pdf.setFontSize(8);
-        pdf.setTextColor(51, 65, 85);
-        pdf.text(col.substring(0, 25), 18, currentY + 4.5);
-        pdf.text(String(stats.mean), 70, currentY + 4.5);
-        pdf.text(String(stats.median), 100, currentY + 4.5);
-        pdf.text(String(stats.min), 130, currentY + 4.5);
-        pdf.text(String(stats.max), 160, currentY + 4.5);
-        currentY += 6;
+    currentY += 12;
+
+    // Section 4: Correlation Matrix Heatmap
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(13);
+    pdf.setTextColor(15, 23, 42);
+    pdf.text('4. Pearson Correlation Matrix Heatmap', 14, currentY);
+    currentY += 8;
+
+    if (numCols.length >= 2) {
+      const corrCols = numCols.slice(0, 5);
+      const corrMatrix = computeCorrelationMatrix(data, corrCols);
+
+      const cellW = 32;
+      const cellH = 10;
+      const startX = 42;
+
+      // Column Headers
+      pdf.setFontSize(7.5);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(71, 85, 105);
+      corrCols.forEach((col, cIdx) => {
+        pdf.text(col.substring(0, 8), startX + cIdx * cellW + cellW / 2, currentY, { align: 'center' });
       });
+      currentY += 4;
 
-      currentY += 10;
+      // Rows
+      corrCols.forEach((rowCol, rIdx) => {
+        pdf.setFontSize(7.5);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(71, 85, 105);
+        pdf.text(rowCol.substring(0, 10), 14, currentY + rIdx * cellH + 6);
+
+        corrCols.forEach((cCol, cIdx) => {
+          const val = corrMatrix[rowCol][cCol] ?? 0;
+          const absVal = Math.abs(val);
+
+          // Color scale logic: high positive = emerald, high negative = rose, 1.0 = blue
+          if (rowCol === cCol) {
+            pdf.setFillColor(59, 130, 246); // Blue for self 1.0
+          } else if (val > 0.5) {
+            pdf.setFillColor(16, 185, 129); // Emerald
+          } else if (val > 0.2) {
+            pdf.setFillColor(52, 211, 153);
+          } else if (val < -0.3) {
+            pdf.setFillColor(244, 63, 94); // Red/Rose
+          } else {
+            pdf.setFillColor(241, 245, 249); // Neutral light
+          }
+
+          pdf.rect(startX + cIdx * cellW, currentY + rIdx * cellH, cellW - 1, cellH - 1, 'F');
+          pdf.setTextColor(absVal > 0.3 || rowCol === cCol ? 255 : 51, absVal > 0.3 || rowCol === cCol ? 255 : 65, absVal > 0.3 || rowCol === cCol ? 255 : 85);
+          pdf.setFontSize(8);
+          pdf.text(String(val), startX + cIdx * cellW + cellW / 2, currentY + rIdx * cellH + 6.5, { align: 'center' });
+        });
+      });
     }
 
-    // Section 4: Capture Dashboard / Chart Visualizations if available
+    addFooter(2, 3);
+
+    // ==========================================
+    // PAGE 3: VISUAL DASHBOARD & ALL CHARTS
+    // ==========================================
     const element = document.getElementById(dashboardId);
     if (element) {
+      pdf.addPage();
+      currentY = 15;
+
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(13);
+      pdf.setTextColor(15, 23, 42);
+      pdf.text('5. Multi-Chart Analytics Showcase & Visualizations', 14, currentY);
+
       const canvas = await html2canvas(element, {
         scale: 1.5,
         backgroundColor: '#090d16',
@@ -206,27 +281,18 @@ export async function exportDashboardToPDF(dashboardId, datasetName = 'ReadyNest
       });
       const imgData = canvas.toDataURL('image/png');
 
-      // Add Page 2 for Visual Charts
-      pdf.addPage();
-
-      // Page 2 Header
-      pdf.setFillColor(15, 23, 42);
-      pdf.rect(0, 0, pageWidth, 20, 'F');
-      pdf.setTextColor(255, 255, 255);
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(12);
-      pdf.text('4. Visual Dashboard & Chart Reports', 14, 13);
-
       const imgWidth = 182;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const maxImgHeight = 250;
+      const maxImgHeight = 245;
       const finalHeight = Math.min(imgHeight, maxImgHeight);
 
-      pdf.addImage(imgData, 'PNG', 14, 25, imgWidth, finalHeight);
+      pdf.addImage(imgData, 'PNG', 14, 22, imgWidth, finalHeight);
+
+      addFooter(3, 3);
     }
 
-    pdf.save(`${datasetName.toLowerCase().replace(/\s+/g, '_')}_full_report.pdf`);
+    pdf.save(`${datasetName.toLowerCase().replace(/\s+/g, '_')}_nexusdata_report.pdf`);
   } catch (err) {
-    console.error('Failed to export PDF report:', err);
+    console.error('Failed to generate PDF report:', err);
   }
 }

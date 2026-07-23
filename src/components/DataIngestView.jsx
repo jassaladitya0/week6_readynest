@@ -93,7 +93,8 @@ export default function DataIngestView({ data, datasetInfo, onDataLoaded, onSele
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
               <span className="badge badge-blue">Step 1 of 2</span>
-              <span className="badge badge-emerald">Ready for Ingestion</span>
+              <span className="badge badge-purple">NexusData AI</span>
+              <span className="badge badge-emerald">Created by Aditya Jassal</span>
             </div>
             <h2 className="title-gradient" style={{ fontSize: '1.9rem' }}>Upload Dataset to Start Analysis</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.925rem', marginTop: '0.3rem' }}>
